@@ -8,8 +8,6 @@ def login_user(driver):
     login = LoginPage(driver)
     login.open()
     login.login("standard_user", "secret_sauce")
-    yield
-    driver.delete_all_cookies()
 
 
 class TestInventory:
