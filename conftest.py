@@ -1,4 +1,5 @@
 import pytest
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -15,3 +16,16 @@ def driver():
     driver.implicitly_wait(10)
     yield driver
     driver.quit()
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when == "call" and report.failed:
+        driver = item.funcargs.get("driver")
+        if driver:
+            os.makedirs("reports/screenshots", exist_ok=True)
+            screenshot_path = f"reports/screenshots/{item.name}.png"
+            driver.save_screenshot(screenshot_path)
