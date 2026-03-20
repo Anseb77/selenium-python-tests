@@ -23,9 +23,12 @@ class InventoryPage:
         return len(self.driver.find_elements(*self._INVENTORY_ITEMS))
 
     def add_item_to_cart(self, index: int = 0):
-        buttons = self.driver.find_elements(*self._ADD_TO_CART_BUTTONS)
-        if index < len(buttons):
-            buttons[index].click()
+        buttons = self.wait.until(
+            EC.presence_of_all_elements_located(self._ADD_TO_CART_BUTTONS)
+        )
+        if index >= len(buttons):
+            raise IndexError(f"No add-to-cart button at index {index}; found {len(buttons)}")
+        buttons[index].click()
 
     def get_cart_count(self) -> int:
         try:

@@ -21,12 +21,15 @@ class CartPage:
         return [el.text for el in self.driver.find_elements(*self._ITEM_NAMES)]
 
     def remove_item(self, index: int = 0):
-        buttons = self.driver.find_elements(*self._REMOVE_BUTTONS)
-        if index < len(buttons):
-            buttons[index].click()
+        buttons = self.wait.until(
+            EC.presence_of_all_elements_located(self._REMOVE_BUTTONS)
+        )
+        if index >= len(buttons):
+            raise IndexError(f"No remove button at index {index}; found {len(buttons)}")
+        buttons[index].click()
 
     def proceed_to_checkout(self):
         self.wait.until(EC.element_to_be_clickable(self._CHECKOUT_BUTTON)).click()
 
     def continue_shopping(self):
-        self.driver.find_element(*self._CONTINUE_SHOPPING).click()
+        self.wait.until(EC.element_to_be_clickable(self._CONTINUE_SHOPPING)).click()
